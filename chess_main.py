@@ -22,9 +22,10 @@ def draw_board(screen):
         for x in range(cc.TILES):
             # This alternates between the blue and gray image.
             image = next(images)
-            # Blit one image after the other at their respective coords.
+            # Blit one image after the other at their respective coords
             background.blit(image, (x*cc.TILE_SIZE, y*cc.TILE_SIZE))
         next(images)
+    #returns a surface, ready to be sent to the screen
     return background
 
 def add_pieces():
@@ -34,18 +35,36 @@ def add_pieces():
             rowlist = []
             for column in range(0,cc.TILES):
                 if row == 0:
-                    piece = cp.GameObject(cc.PATH +cc.IMAGES[column+8], 'black', (column * cc.TILE_SIZE) + cc.OFFSET, (row * cc.TILE_SIZE) + cc.OFFSET, pieces_group)
+                    piece = cp.GameObject(cc.PATH +cc.IMAGES[column+8], 'black', column, row, pieces_group)
                 elif row == 7:
-                    piece = cp.GameObject(cc.PATH +cc.IMAGES[column], 'white', (column * cc.TILE_SIZE) + cc.OFFSET, (row * cc.TILE_SIZE) + cc.OFFSET, pieces_group)
+                    piece = cp.GameObject(cc.PATH +cc.IMAGES[column], 'white', column, row, pieces_group)
                 elif row == 6:
-                    piece = cp.Pawn(cc.PATH +'White_Pawn.gif', 'white', (column * cc.TILE_SIZE) + cc.OFFSET, (row * cc.TILE_SIZE) + cc.OFFSET, pieces_group)
+                    piece = cp.Pawn(cc.PATH +'White_Pawn.gif', 'white', column, row, pieces_group)
                 elif row == 1:
-                    piece = cp.Pawn(cc.PATH +'Black_Pawn.gif', 'black', (column * cc.TILE_SIZE) + cc.OFFSET, (row * cc.TILE_SIZE) + cc.OFFSET, pieces_group)
+                    piece = cp.Pawn(cc.PATH +'Black_Pawn.gif', 'black', column, row, pieces_group)
                 else:
                     pass
                 pieces_group.add(piece)
-
     return pieces_group
+
+def piece_moved(event_pos, all_pieces, turn):
+    for piece in all_pieces:
+        #check to see if our mouseclick was on a piece and that it's our turn
+        if piece.rect.collidepoint(event_pos) and piece.colour == turn:
+            #we have clicked a piece - was it already selected
+            if not piece.selected:
+                piece.selected = True
+                got_piece = True
+                return False
+            else:
+                piece.selected = False
+                got_piece = False
+        elif piece.selected:
+            #move piece - need to check if move is valid
+            if piece.valid_move(event_pos):
+                got_piece = False
+                return True
+    return False
 
 def main():
     #basic setup
@@ -61,30 +80,19 @@ def main():
 
     done = False
     got_piece = False
+    turn = 'white'
 
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                x_pos, y_pos = event.pos
-                for piece in all_pieces:
-                    #check to see if our mouseclick was on a piece
-                    if piece.rect.collidepoint(x_pos, y_pos):
-                        if not piece.selected:
-                            piece.selected = True
-                            got_piece = True
-                            break
-                        else:
-                            piece.selected = False
-                            got_piece = False
-                            break
-                    elif piece.selected:
-                        piece.rect.top = y_pos #need to convert to a row/column coord not 
-                        piece.rect.left = x_pos
-                        piece.selected = False
-                        got_piece = False
-                        break
+                if piece_moved(event.pos, all_pieces, turn):
+                    #we moved a piece, other player's turn
+                    if turn == 'white':
+                        turn = 'black'
+                    else:
+                        turn = 'white'
                 pass
 
         # Now you can just blit the background image once
