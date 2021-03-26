@@ -1,12 +1,10 @@
 import pygame, math, sys, itertools, re, os, time
-import chess_constants as cc
 from pygame.math import Vector2
 
 class Board():
     def __init__(self):
         # initalise pygame to start everything
-        pygame.init()
-        self.screen = pygame.display.set_mode((cc.BOARD_SIZE, cc.BOARD_SIZE))
+        self.screen = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
         pygame.display.set_caption('Chess')
         self.background = self.make_background()
         self.text_box = self.add_text_box(150, 30)
@@ -14,16 +12,16 @@ class Board():
 
     def make_background(self): # this function creates a single image for the board squares and labels
         # set up a simple list of images that we can iterate through
-        images = itertools.cycle((cc.BLUE_IMAGE, cc.GRAY_IMAGE))
-        background = pygame.Surface((cc.BOARD_SIZE, cc.BOARD_SIZE))
+        images = itertools.cycle((BLUE_IMAGE, GRAY_IMAGE))
+        background = pygame.Surface((BOARD_SIZE, BOARD_SIZE))
         background.fill((255, 255, 255))
         # Use two nested for loops to get the coordinates.
-        for row in range(cc.TILES):
-            for column in range(cc.TILES):
+        for row in range(TILES):
+            for column in range(TILES):
                 # This alternates between the blue and gray image.
                 image = next(images)
                 # Blit one image after the other at their respective coords
-                background.blit(image, ((row * cc.TILE_SIZE) + cc.OFFSET, (column * cc.TILE_SIZE) + cc.OFFSET))
+                background.blit(image, ((row * TILE_SIZE) + OFFSET, (column * TILE_SIZE) + OFFSET))
             next(images)
         background = self.mark_out(background)
         #returns a surface, ready to be sent to the screen
@@ -31,22 +29,22 @@ class Board():
 
     def mark_out(self, background): # this function adds the column / row lables
         # position row labels
-        for row, row_lable in enumerate(cc.ROWS):
-            txt_image = cc.FONT.render(row_lable, True, (0, 0, 0))
+        for row, row_lable in enumerate(ROWS):
+            txt_image = FONT.render(row_lable, True, (0, 0, 0))
             # labels up & down the left
-            background.blit(txt_image, (5, (row * cc.TILE_SIZE) + (cc.OFFSET * 3)))
+            background.blit(txt_image, (5, (row * TILE_SIZE) + (OFFSET * 3)))
             # labels up and down the right, we use the same txt_image
-            background.blit(txt_image, (cc.BOARD_SIZE - 20, (row * cc.TILE_SIZE) + (cc.OFFSET * 3)))
-        for column, column_lable in enumerate(cc.COLUMNS):
-            txt_image = cc.FONT.render(column_lable, True, (0, 0, 0))
+            background.blit(txt_image, (BOARD_SIZE - 20, (row * TILE_SIZE) + (OFFSET * 3)))
+        for column, column_lable in enumerate(COLUMNS):
+            txt_image = FONT.render(column_lable, True, (0, 0, 0))
             # labels along the top
-            background.blit(txt_image, ((column * cc.TILE_SIZE) + (cc.OFFSET * 3), 5))
+            background.blit(txt_image, ((column * TILE_SIZE) + (OFFSET * 3), 5))
             # labels along the bottom, we use the same txt_image
-            background.blit(txt_image, ((column * cc.TILE_SIZE) + (cc.OFFSET * 3), cc.BOARD_SIZE - 20))
+            background.blit(txt_image, ((column * TILE_SIZE) + (OFFSET * 3), BOARD_SIZE - 20))
         return background
 
     def load_pieces(self, file_name):
-        input_file = open(cc.PATH + file_name, 'r')
+        input_file = open(PATH + file_name, 'r')
         input_data = input_file.readlines()
         input_file.closed
 
@@ -62,9 +60,9 @@ class Board():
         pieces_group = pygame.sprite.Group()
         # first create a blank board state
         board_state = []
-        for column in range(0, cc.TILES):
+        for column in range(0, TILES):
                 columnlist = []
-                for row in range(0, cc.TILES):
+                for row in range(0, TILES):
                     columnlist.append(None)
                 board_state.append(columnlist)
         # then read through our load list and swap in pieces
@@ -84,14 +82,14 @@ class Board():
     def xy_to_board(self, pos):
         #first work out which row/column we clicked in
         column, row = pos
-        column -= cc.OFFSET
-        row -= cc.OFFSET
+        column -= OFFSET
+        row -= OFFSET
         if (column < 0 or row < 0 or
-                column > (cc.BOARD_SIZE - (cc.OFFSET * 2)) or 
-                row > (cc.BOARD_SIZE - (cc.OFFSET * 2))):
+                column > (BOARD_SIZE - (OFFSET * 2)) or 
+                row > (BOARD_SIZE - (OFFSET * 2))):
                 return [99, 99]
-        aligned_column = math.trunc(column / cc.TILE_SIZE)
-        aligned_row = math.trunc(row / cc.TILE_SIZE)
+        aligned_column = math.trunc(column / TILE_SIZE)
+        aligned_row = math.trunc(row / TILE_SIZE)
         aligned_square = [aligned_column, aligned_row]
         return aligned_square
 
@@ -102,7 +100,7 @@ class Board():
         return temp_text_box
 
     def show_in_text_box(self, text):
-        txt_surface = cc.FONT.render(text, True, cc.TEXT_COLOUR)
+        txt_surface = FONT.render(text, True, TEXT_COLOUR)
         self.text_box.fill(self.BOX_COLOUR)
         self.text_box.blit(txt_surface, (5, 5))
         self.screen.blit(self.text_box, (350, 410))
@@ -110,7 +108,7 @@ class Board():
 
     def check_valid_origin_selected(self, column, row):
         if self.board_state[column][row] != None:
-            if self.board_state[column][row].colour == cc.PLAYERS[self.player_turn]:
+            if self.board_state[column][row].colour == PLAYERS[self.player_turn]:
             # if we have selected our own colour peice
                 return True
         return False
@@ -118,12 +116,12 @@ class Board():
     def check_valid_input(self, temp_input):
         pattern = '[a-h][1-8][a-h][1-8]'
         if re.search(pattern, temp_input):
-            origin_column = cc.COLUMNS.index(temp_input[0])
-            origin_row = cc.ROWS.index(temp_input[1])
+            origin_column = COLUMNS.index(temp_input[0])
+            origin_row = ROWS.index(temp_input[1])
             if self.check_valid_origin_selected(origin_column, origin_row):
                 origin_pos = (origin_column, origin_row)
-                destination_column = cc.COLUMNS.index(temp_input[2])
-                destination_row = cc.ROWS.index(temp_input[3])
+                destination_column = COLUMNS.index(temp_input[2])
+                destination_row = ROWS.index(temp_input[3])
                 destination_pos = (destination_column, destination_row)
                 if self.check_valid_move(origin_pos, destination_pos):
                     self.move_piece(origin_pos, destination_pos)
@@ -168,7 +166,7 @@ class Board():
             # and the other colour to our current player
             if (abs(target_col - origin_col) == 1 and
                     abs(target_row - origin_row) == 1 and
-                    self.board_state[target_col][target_row].colour != cc.PLAYERS[self.player_turn]
+                    self.board_state[target_col][target_row].colour != PLAYERS[self.player_turn]
                     ):
                 return True
         return False
@@ -297,7 +295,7 @@ class Board():
 class ChessPiece(pygame.sprite.Sprite):
     def __init__(self, piece_name, colour, column, row, pieces_group):
         pygame.sprite.Sprite.__init__(self, pieces_group)
-        image_path = cc.PATH + colour + '_' + piece_name + '.gif'
+        image_path = PATH + colour + '_' + piece_name + '.gif'
         self.name = piece_name
         self.image = pygame.image.load(image_path)
         self.rect = self.image.get_rect()
@@ -311,7 +309,7 @@ class ChessPiece(pygame.sprite.Sprite):
         # TILE_SIZE / 2 puts us in the middle of the tile
         # OFFSET accounts for the border
         # num * TILESIZE converts the column number to a x or y value
-        return (cc.TILE_SIZE / 2) + cc.OFFSET + (num * cc.TILE_SIZE)
+        return (TILE_SIZE / 2) + OFFSET + (num * TILE_SIZE)
 
     def move_to(self, destination_pos):
         target_col, target_row = destination_pos
@@ -321,6 +319,28 @@ class ChessPiece(pygame.sprite.Sprite):
 def main():
     my_chess_game = Board()
     my_chess_game.run()
+
+CWD = os.getcwd()
+RESOURCES = '/Chess_Resources/'
+PATH  = CWD + RESOURCES
+pygame.init()
+
+#set up board size
+TILE_SIZE = 100
+TILES = 8
+OFFSET = 25
+BOARD_SIZE = (TILE_SIZE * TILES) + (OFFSET * 2)
+BLUE_IMAGE = pygame.Surface((TILE_SIZE,TILE_SIZE))
+BLUE_IMAGE.fill(pygame.Color('lightskyblue2'))
+GRAY_IMAGE = pygame.Surface((TILE_SIZE,TILE_SIZE))
+GRAY_IMAGE.fill(pygame.Color('slategray4'))
+FONT = pygame.font.Font(None, 32)
+
+TEXT_COLOUR = pygame.Color('darkslategrey')
+COLUMNS = [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+ROWS = [ '1', '2', '3', '4', '5', '6', '7', '8']
+
+PLAYERS = ['White', 'Black']
 
 if __name__ == '__main__':
     main()
