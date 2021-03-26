@@ -19,3 +19,5 @@ FONT = pygame.font.Font(None, 32)
 TEXT_COLOUR = pygame.Color('darkslategrey')
 COLUMNS = [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 ROWS = [ '1', '2', '3', '4', '5', '6', '7', '8']
+
+PLAYERS = ['White', 'Black']
