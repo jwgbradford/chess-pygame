@@ -1,0 +1,2 @@
+Black, Pawn, 6, 1
+White, Pawn, 0, 6

@@ -70,11 +70,10 @@ class Board():
             piece_colour = entry[0]
             piece_name = entry[1]
             # because we're reading in from a file, we need to force python to treat as integer
-            piece_index = int(entry[2])
-            column = int(entry[3])
-            row = int(entry[4])
+            column = int(entry[2])
+            row = int(entry[3])
             # we can use piece_index from our list of pieces to load separate class objects
-            piece = ChessPiece(piece_name, piece_colour, column, row, pieces_group)
+            piece = ChessPiece(piece_name, piece_colour, column, row)
             board_state[column][row] = piece
             pieces_group.add(piece)
         return pieces_group, board_state
@@ -293,17 +292,19 @@ class Board():
 # we decide to put the game logic on the Board
 # the ChessPiece is just a visual representaiton with some local data
 class ChessPiece(pygame.sprite.Sprite):
-    def __init__(self, piece_name, colour, column, row, pieces_group):
-        pygame.sprite.Sprite.__init__(self, pieces_group)
+    def __init__(self, piece_name, colour, column, row):
+        # define our chess piece as a sprite in pygame
+        pygame.sprite.Sprite.__init__(self)
+        # set the image for our sprite
         image_path = PATH + colour + '_' + piece_name + '.gif'
         self.name = piece_name
         self.image = pygame.image.load(image_path)
+        # set the rectangle for the sprite
         self.rect = self.image.get_rect()
         self.rect.centerx  = self.cr_to_xy(column)
         self.rect.centery = self.cr_to_xy(row)
+        # save the colour, and that it's not been selected
         self.colour = colour
-        self.selected = False
-        self.first_move = True
 
     def cr_to_xy(self, num):
         # TILE_SIZE / 2 puts us in the middle of the tile
