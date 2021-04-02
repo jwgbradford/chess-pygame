@@ -5,6 +5,39 @@ class Board():
         self.screen = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
         pygame.display.set_caption('Chess')
         self.background = self.make_background()
+        self.text_box = self.add_text_box(150, 30)
+
+    def add_text_box(self, w, h):
+        temp_text_box = pygame.Surface((w, h))
+        temp_text_box.fill(BOX_COLOUR)
+        return temp_text_box
+
+    def show_in_text_box(self, text):
+        txt_surface = FONT.render(text, True, TEXT_COLOUR)
+        self.text_box.fill(BOX_COLOUR)
+        self.text_box.blit(txt_surface, (5, 5))
+        self.screen.blit(self.text_box, (350, 410))
+        pygame.display.flip()
+
+    def text_input(self):
+        text = ''
+        self.screen.blit(self.text_box, (350, 410))
+        pygame.display.flip()
+        active = True
+        while active:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    raise SystemExit
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if len(text) == 0:
+                            active = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    elif len(text) < 4:
+                        text += event.unicode
+                    self.show_in_text_box(text)
 
     def make_background(self):
         # set up a simple list of images that we can iterate through
@@ -69,6 +102,12 @@ class Board():
     def run(self):
         all_pieces, self.board_state = self.add_pieces()
         while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    raise SystemExit
+                elif event.type == pygame.KEYDOWN:
+                    self.text_input()
             self.screen.blit(self.background, (0, 0))
             all_pieces.draw(self.screen)
             pygame.display.flip()
@@ -99,6 +138,7 @@ GRAY_IMAGE = pygame.Surface((TILE_SIZE,TILE_SIZE))
 GRAY_IMAGE.fill(pygame.Color('slategray4'))
 FONT = pygame.font.Font(None, 32)
 TEXT_COLOUR = pygame.Color('darkslategrey')
+BOX_COLOUR = pygame.Color('coral')
 COLUMNS = [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 ROWS = [ '1', '2', '3', '4', '5', '6', '7', '8']
 CWD = os.getcwd()

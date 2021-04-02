@@ -93,14 +93,13 @@ class Board():
         return aligned_square
 
     def add_text_box(self, w, h): # creates the basic text input box
-        self.BOX_COLOUR = pygame.Color('coral')
         temp_text_box = pygame.Surface((w, h))
-        temp_text_box.fill(self.BOX_COLOUR)
+        temp_text_box.fill(BOX_COLOUR)
         return temp_text_box
 
     def show_in_text_box(self, text):
         txt_surface = FONT.render(text, True, TEXT_COLOUR)
-        self.text_box.fill(self.BOX_COLOUR)
+        self.text_box.fill(BOX_COLOUR)
         self.text_box.blit(txt_surface, (5, 5))
         self.screen.blit(self.text_box, (350, 410))
         pygame.display.flip()
@@ -277,7 +276,6 @@ class Board():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     raise SystemExit
-                # if move == '' then no valid move was made
                 elif event.type == pygame.TEXTINPUT:
                     self.text_input()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -338,6 +336,9 @@ GRAY_IMAGE.fill(pygame.Color('slategray4'))
 
 FONT = pygame.font.Font(None, 32)
 TEXT_COLOUR = pygame.Color('darkslategrey')
+
+BOX_COLOUR = pygame.Color('coral')
+
 COLUMNS = [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 ROWS = [ '1', '2', '3', '4', '5', '6', '7', '8']
 
