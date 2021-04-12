@@ -325,7 +325,7 @@ PATH  = CWD + RESOURCES
 pygame.init()
 
 #set up board size
-TILE_SIZE = 100
+TILE_SIZE = 75
 TILES = 8
 OFFSET = 25
 BOARD_SIZE = (TILE_SIZE * TILES) + (OFFSET * 2)
