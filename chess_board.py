@@ -136,6 +136,12 @@ class Board():
         self.board_state[target_col][target_row] = moving_piece
         self.board_state[origin_col][origin_row] = None
 
+    def delta_norm(self, tar, ori):
+        d = tar - ori
+        if d != 0:
+            d = int(d / abs(d))
+        return int(d)
+
     def test_pawn_rules(self, origin_pos, destination_pos):
         origin_col, origin_row = origin_pos
         target_col, target_row = destination_pos
@@ -168,12 +174,6 @@ class Board():
                     ):
                 return True
         return False
-
-    def delta_norm(self, tar, ori):
-        d = tar - ori
-        if d != 0:
-            d = int(d / abs(d))
-        return int(d)
 
     def test_rook_rules(self, origin_pos, destination_pos):
         origin_col, origin_row = origin_pos
