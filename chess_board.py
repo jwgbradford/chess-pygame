@@ -204,13 +204,17 @@ class Board():
     def check_valid_move(self, origin_pos, destination_pos):
         origin_col, origin_row = origin_pos
         piece_type = self.board_state[origin_col][origin_row].name
+        rule_is = False
+        # test proposed move is allowed by piece move rules
         if piece_type == 'Pawn':
-            if self.test_pawn_rules(origin_pos, destination_pos):
-                return True
+            rule_is = self.test_pawn_rules(origin_pos, destination_pos)
         elif piece_type == 'Rook':
-            if self.test_rook_rules(origin_pos, destination_pos):
-                return True
-        return False
+            rule_is = self.test_rook_rules(origin_pos, destination_pos)
+        # test proposed move doesn't break other rules
+        if rule_is:
+            pass
+            #self.test_check(origin_pos, destination_pos)
+        return rule_is
 
     def text_input(self): # this creates a pop-up window to enter moves
         # clear last entry
